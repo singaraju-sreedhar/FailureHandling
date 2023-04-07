@@ -8,19 +8,47 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: '*'
   endpoint:
     health:
       show-details: always
 
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+
 resilience4j:
   retry:
+   # retry-aspect-order: 2
     instances:
-      PaymentService:
-        maxAttempts: 3
-        waitDuration: 2s
+      PaymentService: #name of the service for which this configuration is intended to
+        maxAttempts: 5
+        waitDuration: 5s
+    metrics:
+      legacy:
+        enabled: true
+      enabled: true
 
+
+
+      #  retry-exceptions:
+      #    - org.springframework.web.client.ResourceAccessException
+      #    - java.net.ConnectException
+      #    - java.net.SocketTimeoutException
+      #    - org.springframework.web.client.HttpServerErrorException.InternalServerError
+       # retryExceptions:
+        #  - org.springframework.web.client.HttpServerErrorException.InternalServerError
+       # retry-exceptions:
+       #   - org.springframework.web.client.HttpServerErrorException
+       # retry-on-status:
+       #   - 500
+       # enableExponentialBackoff: true
+       # exponentialBackoffMultiplier: 2
+       # failAfterMaxAttempts:
   circuitbreaker:
+   # circuit-breaker-aspect-order: 1
     instances:
       PaymentService:
         registerHealthIndicator: true
@@ -29,7 +57,15 @@ resilience4j:
         failureRateThreshold: 50
         minimumNumberOfCalls: 5
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 5s
+        waitDurationInOpenState: 15s
         permittedNumberOfCallsInHalfOpenState: 3
         slidingWindowSize: 10
         slidingWindowType: COUNT_BASED
+
+  timelimiter:
+    instances:
+      PaymentService:
+        timeoutDuration: 1s
+        cancelRunningFuture: true
+
+
