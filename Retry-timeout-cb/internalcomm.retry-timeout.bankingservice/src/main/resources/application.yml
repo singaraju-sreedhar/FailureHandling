@@ -18,6 +18,12 @@ resilience4j:
       BankingService:
         maxAttempts: 3
         waitDuration: 2s
+        retryExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException.InternalServerError
+          - org.springframework.web.client.HttpServerErrorException.BadGateway
+          - org.springframework.web.client.HttpServerErrorException.GatewayTimeout
+          - org.springframework.web.client.HttpClientErrorException.TooManyRequests
 
   circuitbreaker:
     # circuit-breaker-aspect-order: 1
