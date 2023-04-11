@@ -1,20 +1,21 @@
 @startuml
-participant Payment
-participant Banking
+participant PaymentService
+participant Payment_CircuitBreaker
+participant Banking_CircuitBreaker
+participant BankingService
 participant Mambu
 
-Payment -> Banking: request
-Banking -> Mambu: request
-
-alt Circuit breaker is open
-    Banking -> Banking: throw error
-    Banking -> Payment: fallback response
-else Circuit breaker is half-open
-    Banking -> Mambu: retry request
-    Mambu --> Banking: response
-    Banking -> Payment: response
-else Circuit breaker is closed
-    Mambu --> Banking: response
-    Banking -> Payment: response
+alt if (Circuit breaker is open)
+    PaymentService -> Banking_CircuitBreaker: request
+    Banking_CircuitBreaker -> Banking_CircuitBreaker: not permitted
+    Banking_CircuitBreaker -> PaymentService: throw error
+else if Circuit breaker is half-open
+    PaymentService -> Banking_CircuitBreaker
+    BankingService -> Mambu: retry request
+    Mambu --> BankingService: response
+    BankingService -> PaymentService: response
+else if Circuit breaker is closed
+    Mambu --> BankingService: response
+    BankingService -> PaymentService: response
 end
 @enduml

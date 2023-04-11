@@ -1,6 +1,7 @@
 package com.sre.retrytimeout.paymentservice.service;
 
 import com.sre.retrytimeout.paymentservice.config.FallbackMethods;
+import com.sre.retrytimeout.paymentservice.exceptions.CustomException;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,22 @@ public class ProcessBankingRequests  {
     String fallbackMethod(Throwable t)
     {
         return fallbackFunction.apply(t);
+    }
+
+
+    @Retry(name=PAYMENT_SERVICE,fallbackMethod = "fallbackMethod")
+    public String RetryWithCE() throws CustomException
+    {
+        log.info("Processing RetryWithCE");
+        throw new CustomException("Custom exceptions state Object");
+    }
+
+    String fallbackMethod(CustomException ex)
+    {
+        log.info("fallback method of RetryWithCE ");
+
+        return "Custom exceptions fallback handler handled with ezception state :  "
+                +ex.getExpDataObject().toString();
     }
 
 }

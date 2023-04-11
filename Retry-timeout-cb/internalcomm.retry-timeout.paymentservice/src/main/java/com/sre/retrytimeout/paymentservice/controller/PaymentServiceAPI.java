@@ -1,6 +1,7 @@
 package com.sre.retrytimeout.paymentservice.controller;
 
 
+import com.sre.retrytimeout.paymentservice.exceptions.CustomException;
 import com.sre.retrytimeout.paymentservice.service.ProcessBankingRequests;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -36,10 +37,10 @@ public class PaymentServiceAPI {
         log.info("Calling REST API getBalance of BankingService");
         String balance = "";
 
-
         try {
             balance = restTemplate.getForObject(bankingServiceURL, String.class);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
             log.error("exception caught in code");
             throw ex;
         }
@@ -64,6 +65,7 @@ public class PaymentServiceAPI {
 
         log.info("Retry Fallback for get balance invoked due to exception ");
 
+
         return ResponseEntity.status(HttpStatus.PARTIAL_CONTENT)
                 .body("FAllback Retry handler of PaymentService getBalance . Reason: "
                         + exception.getMessage());
@@ -80,4 +82,10 @@ public class PaymentServiceAPI {
         return bankingRequests.GlobalRetry();
     }
 
+    @GetMapping("/customexception")
+    public String FallbackWithCustimException()
+    {
+        log.info("Global Retry API executing");
+        return bankingRequests.RetryWithCE();
+    }
 }
