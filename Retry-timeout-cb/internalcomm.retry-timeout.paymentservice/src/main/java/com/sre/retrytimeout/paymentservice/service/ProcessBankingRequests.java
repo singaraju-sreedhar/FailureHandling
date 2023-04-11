@@ -58,14 +58,16 @@ public class ProcessBankingRequests  {
         return result;
     }
 
-    String fallbackMethod(FallBackException fbEx)
+    String fallbackMethod(FallBackException fbEx) throws ApiResponseException
     {
         log.info("fallback method of RetryWithCE ");
 
-        return "Custom exceptions fallback handler handled with exception state :  "
+        log.info("Custom exceptions fallback handler handled with exception state :  "
                 +fbEx.getApiResponseException().getExpDataObject().toString()
                 +" Exception reason : "
-                +fbEx.getOriginalException().getMessage();
+                +fbEx.getOriginalException().getMessage());
+
+        throw fbEx.getApiResponseException();
     }
 
 }

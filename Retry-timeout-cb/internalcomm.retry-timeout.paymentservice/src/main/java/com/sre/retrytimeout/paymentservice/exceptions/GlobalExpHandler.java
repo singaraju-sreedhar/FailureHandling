@@ -9,9 +9,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExpHandler  {
 
     @ExceptionHandler(ApiResponseException.class)
-    public ResponseEntity<String> handleUserNotFoundException(ApiResponseException ex) {
+    public ResponseEntity<String> ApiResponseExceptionHandler(ApiResponseException apiEx) {
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).
+                body("Controller Advice global exception handler : "
+                        +" Custom data : "+apiEx.getExpDataObject()
+                        +" Reason: "+ apiEx.getOriginalException().getMessage());
     }
 
 }
