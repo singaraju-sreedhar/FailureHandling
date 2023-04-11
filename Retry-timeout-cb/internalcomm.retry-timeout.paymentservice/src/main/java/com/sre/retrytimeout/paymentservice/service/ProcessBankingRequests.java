@@ -49,8 +49,11 @@ public class ProcessBankingRequests  {
             result=restTemplate.getForObject(bankingServiceURL, String.class);
         }
         catch (HttpStatusCodeException | ResourceAccessException ex) {
-            ApiResponseException apiResponseException=new ApiResponseException("Custom exceptions state Object",ex);
-            throw new FallBackException(apiResponseException);
+
+            ApiResponseException apiResponseException=
+                        new ApiResponseException("Custom exceptions state Object",ex);
+
+            throw new FallBackException(apiResponseException, ex);
         }
         return result;
     }
@@ -62,7 +65,7 @@ public class ProcessBankingRequests  {
         return "Custom exceptions fallback handler handled with exception state :  "
                 +fbEx.getApiResponseException().getExpDataObject().toString()
                 +" Exception reason : "
-                +fbEx.getApiResponseException().getOriginalException().getMessage();
+                +fbEx.getOriginalException().getMessage();
     }
 
 }
