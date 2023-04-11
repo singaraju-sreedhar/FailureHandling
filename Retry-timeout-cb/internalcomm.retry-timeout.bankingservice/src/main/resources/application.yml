@@ -26,16 +26,14 @@ resilience4j:
           - org.springframework.web.client.HttpClientErrorException.TooManyRequests
 
   circuitbreaker:
-    # circuit-breaker-aspect-order: 1
     instances:
       BankingService:
         registerHealthIndicator: true
-        eventConsumerBufferSize: 10
         #percentage
         failureRateThreshold: 50
-        minimumNumberOfCalls: 5
+        minimumNumberOfCalls: 10
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 15s
-        permittedNumberOfCallsInHalfOpenState: 3
-        slidingWindowSize: 10
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 10
+        slidingWindowSize: 100
         slidingWindowType: COUNT_BASED

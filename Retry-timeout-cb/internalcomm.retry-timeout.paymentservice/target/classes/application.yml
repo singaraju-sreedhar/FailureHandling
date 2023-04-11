@@ -55,19 +55,28 @@ resilience4j:
        # exponentialBackoffMultiplier: 2
        # failAfterMaxAttempts:
   circuitbreaker:
-   # circuit-breaker-aspect-order: 1
+    metrics:
+      enabled: true
+      legacy:
+        enabled: true
     instances:
+      #name of the config instance
       PaymentService:
         registerHealthIndicator: true
-        eventConsumerBufferSize: 10
         #percentage
         failureRateThreshold: 50
-        minimumNumberOfCalls: 5
+        minimumNumberOfCalls: 10
         automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 15s
-        permittedNumberOfCallsInHalfOpenState: 3
-        slidingWindowSize: 10
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 10
+        slidingWindowSize: 100
         slidingWindowType: COUNT_BASED
+        recordExceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - org.springframework.web.client.HttpServerErrorException.InternalServerError
+          - org.springframework.web.client.HttpServerErrorException.BadGateway
+          - org.springframework.web.client.HttpServerErrorException.GatewayTimeout
+          - org.springframework.web.client.HttpClientErrorException.TooManyRequests
 
   timelimiter:
     instances:

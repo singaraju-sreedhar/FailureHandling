@@ -1,0 +1,20 @@
+@startuml
+participant Payment
+participant Banking
+participant Mambu
+
+Payment -> Banking: request
+Banking -> Mambu: request
+
+alt Circuit breaker is open
+    Banking -> Banking: throw error
+    Banking -> Payment: fallback response
+else Circuit breaker is half-open
+    Banking -> Mambu: retry request
+    Mambu --> Banking: response
+    Banking -> Payment: response
+else Circuit breaker is closed
+    Mambu --> Banking: response
+    Banking -> Payment: response
+end
+@enduml
