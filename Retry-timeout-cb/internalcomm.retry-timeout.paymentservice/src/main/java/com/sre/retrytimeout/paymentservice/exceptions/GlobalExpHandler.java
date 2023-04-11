@@ -8,8 +8,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExpHandler  {
 
-    @ExceptionHandler(CustomException.class)
-    public ResponseEntity<String> handleUserNotFoundException(CustomException ex) {
+    @ExceptionHandler(ApiResponseException.class)
+    public ResponseEntity<String> handleUserNotFoundException(ApiResponseException ex) {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }

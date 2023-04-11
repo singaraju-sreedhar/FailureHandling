@@ -32,6 +32,8 @@ resilience4j:
           - org.springframework.web.client.HttpServerErrorException.BadGateway
           - org.springframework.web.client.HttpServerErrorException.GatewayTimeout
           - org.springframework.web.client.HttpClientErrorException.TooManyRequests
+          - com.sre.retrytimeout.paymentservice.exceptions.FallBackException
+
 
     metrics:
       legacy:
@@ -77,6 +79,7 @@ resilience4j:
           - org.springframework.web.client.HttpServerErrorException.BadGateway
           - org.springframework.web.client.HttpServerErrorException.GatewayTimeout
           - org.springframework.web.client.HttpClientErrorException.TooManyRequests
+          - com.sre.retrytimeout.paymentservice.exceptions.FallBackException
 
   timelimiter:
     instances:

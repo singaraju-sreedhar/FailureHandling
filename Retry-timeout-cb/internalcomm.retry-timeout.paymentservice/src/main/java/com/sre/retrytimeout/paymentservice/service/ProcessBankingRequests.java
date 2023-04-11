@@ -1,10 +1,14 @@
 package com.sre.retrytimeout.paymentservice.service;
 
 import com.sre.retrytimeout.paymentservice.config.FallbackMethods;
-import com.sre.retrytimeout.paymentservice.exceptions.CustomException;
+import com.sre.retrytimeout.paymentservice.exceptions.ApiResponseException;
+import com.sre.retrytimeout.paymentservice.exceptions.FallBackException;
 import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.function.Function;
@@ -37,18 +41,28 @@ public class ProcessBankingRequests  {
 
 
     @Retry(name=PAYMENT_SERVICE,fallbackMethod = "fallbackMethod")
-    public String RetryWithCE() throws CustomException
+    public String RetryWithCE() throws FallBackException
     {
         log.info("Processing RetryWithCE");
-        throw new CustomException("Custom exceptions state Object");
+        String result;
+        try {
+            result=restTemplate.getForObject(bankingServiceURL, String.class);
+        }
+        catch (HttpStatusCodeException | ResourceAccessException ex) {
+            ApiResponseException apiResponseException=new ApiResponseException("Custom exceptions state Object",ex);
+            throw new FallBackException(apiResponseException);
+        }
+        return result;
     }
 
-    String fallbackMethod(CustomException ex)
+    String fallbackMethod(FallBackException fbEx)
     {
         log.info("fallback method of RetryWithCE ");
 
-        return "Custom exceptions fallback handler handled with ezception state :  "
-                +ex.getExpDataObject().toString();
+        return "Custom exceptions fallback handler handled with exception state :  "
+                +fbEx.getApiResponseException().getExpDataObject().toString()
+                +" Exception reason : "
+                +fbEx.getApiResponseException().getOriginalException().getMessage();
     }
 
 }

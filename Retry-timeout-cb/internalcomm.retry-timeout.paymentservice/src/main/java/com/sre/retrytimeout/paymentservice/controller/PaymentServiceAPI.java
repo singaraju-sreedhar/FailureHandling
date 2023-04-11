@@ -1,7 +1,6 @@
 package com.sre.retrytimeout.paymentservice.controller;
 
 
-import com.sre.retrytimeout.paymentservice.exceptions.CustomException;
 import com.sre.retrytimeout.paymentservice.service.ProcessBankingRequests;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
@@ -83,9 +82,9 @@ public class PaymentServiceAPI {
     }
 
     @GetMapping("/customexception")
-    public String FallbackWithCustimException()
+    public String FallbackWithCustomException()
     {
-        log.info("Global Retry API executing");
+        log.info("customexception API  executing");
         return bankingRequests.RetryWithCE();
     }
 }
